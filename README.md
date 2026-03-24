@@ -6,7 +6,7 @@ Different homepages can be configured for logged-in users and anonymous (logged-
 
 ## How it works
 
-On every page load the component reads the active Discourse locale, extracts the two-letter language code (e.g. `de`, `fr`), and looks it up in the configured list. If a matching entry is found, `setDefaultHomepage` is called with the configured path. If no match is found, the **first entry in the list** is used as the default fallback.
+On every full page reload the component reads the active Discourse locale, extracts the two-letter language code (e.g. `de`, `fr`), and looks it up in the configured list. If a matching entry is found, `setDefaultHomepage` is called with the configured path. If no match is found, the **first entry in the list** is used as the default fallback.
 
 ## Installation
 
