@@ -1,0 +1,31 @@
+logged_in_homepages:
+  description: "Homepage per language for logged-in users. Set language_code (e.g. 'de') and homepage (e.g. 'c/category-de/6676')."
+  type: objects
+  default:
+    []
+  schema:
+    name: entry
+    identifier: language_code
+    properties:
+      language_code:
+        type: string
+        required: true
+      homepage:
+        type: string
+        required: true
+
+anonymous_homepages:
+  description: "Homepage per language for anonymous (logged-out) users. Set language_code (e.g. 'de') and homepage (e.g. 'tag/de/l/latest?order=created&ascending=false')."
+  type: objects
+  default:
+    []
+  schema:
+    name: entry
+    identifier: language_code
+    properties:
+      language_code:
+        type: string
+        required: true
+      homepage:
+        type: string
+        required: true
