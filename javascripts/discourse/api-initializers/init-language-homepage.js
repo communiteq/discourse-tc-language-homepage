@@ -4,7 +4,7 @@ import PreloadStore from "discourse/lib/preload-store";
 
 export default apiInitializer("1.8.0", (api) => {
   const currentUser = api.getCurrentUser();
-  const lang = (I18n.locale || "en").substring(0, 2).toLowerCase();
+  const lang = (I18n.locale || "de").substring(0, 2).toLowerCase();
 
   const entries = currentUser ? settings.logged_in_homepages : settings.anonymous_homepages;
   const match = entries.find((e) => (e.language_code || "").toLowerCase() === lang) || entries[0];
@@ -28,7 +28,7 @@ export default apiInitializer("1.8.0", (api) => {
     PreloadStore.remove("topic_list");
   }
 
-  api.onPageChange((url) => {
+  api.onPageChange((newURL) => {
     // for anonymous users, we need to check if we are on a homepage
     // that is NOT the correct homepage for the current language,
     // and if so, redirect to the correct homepage
@@ -37,15 +37,22 @@ export default apiInitializer("1.8.0", (api) => {
       const currentTag = router.currentRoute?.params?.tag_name;
       if (match && match.language_code && currentTag !== lang) {
         // check if we are on the old home page
-        const oldEntry = entries.find((e) => (e.language_code || "").toLowerCase() === currentTag);
-        const oldHome = oldEntry?.homepage.split("?")[0] || null;
-        var urlWithoutQuery = url.split("?")[0];
-        if (urlWithoutQuery.startsWith("/")) {
-          urlWithoutQuery = urlWithoutQuery.slice(1);
+        const prevHomepage = entries.find((e) => (e.language_code || "").toLowerCase() === currentTag);
+        const prevPathname = prevHomepage?.homepage.split("?")[0] || null;
+        var newPathname = newURL.split("?")[0];
+        if (newPathname.startsWith("/")) {
+          newPathname = newPathname.slice(1);
         }
-        if (oldHome == urlWithoutQuery) {
-          console.log("Redirecting to correct homepage for language: " + lang);
-          window.location.href = "/" + homepage;
+        if (prevPathname == newPathname) {
+          // we're on the old homepage for the previous language,
+          // so redirect to the correct homepage for the current language
+          var destPathname = homepage.split("?")[0];
+          if (destPathname.startsWith("/")) {
+            destPathname = destPathname.slice(1);
+          }
+          if (destPathname != newPathname) { // avoid redirect loop if the newURL is already the correct homepage
+            window.location.href = "/" + homepage;
+          }
         }
       }
     }
